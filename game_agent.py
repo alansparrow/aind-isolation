@@ -148,17 +148,22 @@ class CustomPlayer:
             #         choosen_move = m
             # return choosen_move
             if (self.iterative):
-                pass
-            else:
-                for move in legal_moves:
-                    forecast_game = game.forecast_move(move)
-                    s, m = self.minimax(forecast_game, self.search_depth, maximizing_player=False)
+                iterative_depth = 1
+                while (1):
+                    s, m = self.minimax(game, iterative_depth, maximizing_player=True)
                     if (s > max_score):
                         max_score = s
-                        choosen_move = move
+                        choosen_move = m
+                    iterative_depth += 1
+            else:
+                s, m = self.minimax(game, self.search_depth, maximizing_player=True)
+                if (s > max_score):
+                    max_score = s
+                    choosen_move = m
 
         except Timeout:
             # Handle any actions required at timeout, if necessary
+            # print(self.time_left())
             pass
 
         # Return the best move from the last completed search iteration
