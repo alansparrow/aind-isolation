@@ -128,6 +128,8 @@ class CustomPlayer:
         # move from the game board (i.e., an opening book), or returning
         # immediately if there are no legal moves
 
+        max_score = float("-Inf")
+        choosen_move = (-1, -1)
         try:
             # The search method call (alpha beta or minimax) should happen in
             # here in order to avoid timeout. The try/except block will
@@ -145,14 +147,22 @@ class CustomPlayer:
             #         max_score = s
             #         choosen_move = m
             # return choosen_move
-            pass
+            if (self.iterative):
+                pass
+            else:
+                for move in legal_moves:
+                    forecast_game = game.forecast_move(move)
+                    s, m = self.minimax(forecast_game, self.search_depth, maximizing_player=False)
+                    if (s > max_score):
+                        max_score = s
+                        choosen_move = move
 
         except Timeout:
             # Handle any actions required at timeout, if necessary
             pass
 
         # Return the best move from the last completed search iteration
-        raise NotImplementedError
+        return choosen_move
 
     def minimax(self, game, depth, maximizing_player=True):
         """Implement the minimax search algorithm as described in the lectures.
@@ -197,6 +207,7 @@ class CustomPlayer:
             legal_moves = game.get_legal_moves()
             for move in legal_moves:
                 forecast_game = game.forecast_move(move)
+                forecast_score = max_score
                 if (depth > 1):
                     forecast_score, forecast_move = self.minimax(forecast_game, depth - 1, not maximizing_player)
                 elif (depth == 1):
@@ -209,6 +220,7 @@ class CustomPlayer:
             legal_moves = game.get_legal_moves()
             for move in legal_moves:
                 forecast_game = game.forecast_move(move)
+                forecast_score = min_score
                 if (depth > 1):
                     forecast_score, forecast_move = self.minimax(forecast_game, depth - 1, not maximizing_player)
                 elif (depth == 1):
