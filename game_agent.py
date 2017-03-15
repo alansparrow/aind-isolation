@@ -216,7 +216,7 @@ class CustomPlayer:
                 if (depth > 1):
                     forecast_score, forecast_move = self.minimax(forecast_game, depth - 1, not maximizing_player)
                 elif (depth == 1):
-                    forecast_score, forecast_move = self.score(forecast_game, self), move
+                    forecast_score = self.score(forecast_game, self)
                 if (forecast_score > max_score):
                     max_score = forecast_score
                     choosen_move = move
@@ -229,7 +229,7 @@ class CustomPlayer:
                 if (depth > 1):
                     forecast_score, forecast_move = self.minimax(forecast_game, depth - 1, not maximizing_player)
                 elif (depth == 1):
-                    forecast_score, forecast_move = self.score(forecast_game, self), move
+                    forecast_score = self.score(forecast_game, self)
                 if (forecast_score < min_score):
                     min_score = forecast_score
                     choosen_move = move
@@ -277,4 +277,35 @@ class CustomPlayer:
             raise Timeout()
 
         # TODO: finish this function!
-        raise NotImplementedError
+        choosen_move = (-1, -1)
+        if (maximizing_player):  # Max node
+            legal_moves = game.get_legal_moves()
+            forecast_alpha = alpha
+            for move in legal_moves:
+                forecast_game = game.forecast_move(move)
+                if (depth > 1):
+                    forecast_alpha, forecast_move = self.alphabeta(forecast_game, depth - 1, alpha, beta, maximizing_player=False)
+                elif (depth == 1):
+                    forecast_alpha = self.score(forecast_game, self)
+                if (forecast_alpha > alpha):  # update better choice
+                    alpha = forecast_alpha
+                    choosen_move = move
+                    if (alpha >= beta):  # prune
+                        break
+                
+            return forecast_alpha, choosen_move
+        else:  # Min node
+            legal_moves = game.get_legal_moves()
+            forecast_beta = beta
+            for move in legal_moves:
+                forecast_game = game.forecast_move(move)
+                if (depth > 1):
+                    forecast_beta, forecast_move = self.alphabeta(forecast_game, depth - 1, alpha, beta, maximizing_player=True)
+                elif (depth == 1):
+                    forecast_beta = self.score(forecast_game, self)
+                if (forecast_beta < beta):  # update better choice
+                    beta = forecast_beta
+                    choosen_move = move
+                    if (alpha >= beta):  # prune
+                        break
+            return forecast_beta, choosen_move
